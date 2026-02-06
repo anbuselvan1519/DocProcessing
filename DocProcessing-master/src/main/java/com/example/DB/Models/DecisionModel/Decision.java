@@ -27,9 +27,11 @@ public class Decision {
     @Column(columnDefinition = "TEXT")
     private String manualComment;
 
-    @ManyToOne
-    @JoinColumn(name = "reviewed_by")
-    private User reviewedBy;
+    @Column(name = "reviewed_by_user_id", nullable = false)
+    private Long reviewedByUserId;
+
+    @Column(name = "reviewed_by_role", nullable = false)
+    private String reviewedByRole;
 
     private LocalDateTime finalizedAt;
 }

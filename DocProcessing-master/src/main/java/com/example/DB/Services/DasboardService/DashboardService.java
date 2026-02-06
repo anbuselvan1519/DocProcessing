@@ -40,7 +40,7 @@ public class DashboardService {
 
     public List<AuditLog> getRecentAuditLogs(User user) {
         return auditLogRepository
-                .findTop10ByPerformedByOrderByTimestampDesc(user);
+                .findTop10ByPerformedByUserIdOrderByTimestampDesc(user.getId());
     }
 
     public Map<String, Long> getAnalytics() {

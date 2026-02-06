@@ -9,7 +9,7 @@ import com.example.DB.Models.UserModel.User;
 public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
 
     // Recent activity for a specific user
-    List<AuditLog> findTop10ByPerformedByOrderByTimestampDesc(User performedBy);
+    List<AuditLog> findTop10ByPerformedByUserIdOrderByTimestampDesc(Long userId);
 
     // Optional: global recent activity
     List<AuditLog> findTop10ByOrderByTimestampDesc();

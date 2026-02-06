@@ -107,7 +107,8 @@ public class WorkFlowService {
         document.setMimeType(Files.probeContentType(file.toPath()));
         document.setStatus("PROCESSED");
         document.setUploadedAt(LocalDateTime.now());
-        document.setUploadedBy(currentUser);
+        document.setUploadedByUserId(currentUser.getId());
+        document.setUploadedByRole(currentUser.getRole());
 
         document = documentRepository.save(document);
 
@@ -132,6 +133,8 @@ public class WorkFlowService {
         decisionEntity.setThrustScore((double) confidenceScore);
         decisionEntity.setDecisionResult(decision.name());
         decisionEntity.setRuleSummary("Confidence-based decision");
+        decisionEntity.setReviewedByUserId(currentUser.getId());
+        decisionEntity.setReviewedByRole(currentUser.getRole());
         decisionEntity.setFinalizedAt(LocalDateTime.now());
 
         decisionRepository.save(decisionEntity);
@@ -147,6 +150,7 @@ public class WorkFlowService {
         );
 
         return new WorkflowResult(
+                document.getId(),
                 extractedFields,
                 fullOcrText.toString(),
                 confidenceScore,

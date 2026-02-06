@@ -1,5 +1,6 @@
 package com.example.DB.Controllers.AuthController;
 
+import com.example.DB.DTO.RegisterRequest;
 import com.example.DB.Models.UserModel.User;
 import com.example.DB.Services.AuthService.AuthService;
 import jakarta.servlet.http.HttpSession;
@@ -15,23 +16,42 @@ public class AuthController {
         this.authService = authService;
     }
 
+    // -------- REGISTER --------
+    @PostMapping("/register")
+    public User register(
+            @RequestBody RegisterRequest request,
+            HttpSession session
+    ) {
+        return authService.register(request, session);
+    }
+
+    // -------- LOGIN --------
     @PostMapping("/login")
     public User login(
             @RequestParam String email,
             @RequestParam String password,
             HttpSession session
     ) {
+        if (email == null || password == null) {
+            throw new IllegalArgumentException("Email and password are required");
+        }
         return authService.login(email, password, session);
     }
 
+    // -------- LOGOUT --------
     @PostMapping("/logout")
     public String logout(HttpSession session) {
         authService.logout(session);
         return "Logged out successfully";
     }
 
+    // -------- CURRENT USER --------
     @GetMapping("/me")
     public User getCurrentUser(HttpSession session) {
-        return authService.getCurrentUser(session);
+        User user = (User) session.getAttribute("USER");
+        if (user == null) {
+            throw new IllegalStateException("User not logged in");
+        }
+        return user;
     }
 }

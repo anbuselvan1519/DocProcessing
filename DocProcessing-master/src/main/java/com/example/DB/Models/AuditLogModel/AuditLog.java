@@ -18,9 +18,11 @@ public class AuditLog {
 
     private String action;
 
-    @ManyToOne
-    @JoinColumn(name = "performed_by")
-    private User performedBy;
+    @Column(name = "performed_by_user_id", nullable = false)
+    private Long performedByUserId;
+
+    @Column(name = "performed_by_role", nullable = false)
+    private String performedByUserRole;
 
     @ManyToOne
     @JoinColumn(name = "document_id")

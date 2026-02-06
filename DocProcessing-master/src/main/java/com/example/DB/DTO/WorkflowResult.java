@@ -4,6 +4,6 @@ import com.example.DB.Enums.DecisionResult;
 
 import java.util.Map;
 
-public record WorkflowResult(Map<String, String> extractedFields, String extractedText, int confidenceScore, DecisionResult decision) {
+public record WorkflowResult(Long id, Map<String, String> extractedFields, String extractedText, int confidenceScore, DecisionResult decision) {
 
 }

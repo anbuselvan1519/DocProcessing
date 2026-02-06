@@ -28,7 +28,8 @@ public class AuditLogService {
 
         AuditLog log = new AuditLog();
         log.setAction(action);
-        log.setPerformedBy(user);
+        log.setPerformedByUserRole(user.getRole());
+        log.setPerformedByUserId(user.getId());
         log.setDocument(document);
         log.setRemarks(remarks);
         log.setTimestamp(LocalDateTime.now());
@@ -38,7 +39,7 @@ public class AuditLogService {
 
     public List<AuditLog> getRecentActivity(User user) {
         return auditLogRepository
-                .findTop10ByPerformedByOrderByTimestampDesc(user);
+                .findTop10ByPerformedByUserIdOrderByTimestampDesc(user.getId());
     }
 
 

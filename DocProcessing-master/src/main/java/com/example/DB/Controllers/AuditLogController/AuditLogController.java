@@ -23,7 +23,7 @@ public class AuditLogController {
 
         User user = (User) session.getAttribute("USER");
         if (user == null) {
-            throw new RuntimeException("User not logged in");
+            throw new IllegalStateException("User not logged in");
         }
         return auditLogService.getRecentActivity(user);
     }

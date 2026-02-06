@@ -14,9 +14,8 @@ public class SystemController {
     public Map<String, Object> health() {
 
         Map<String, Object> status = new HashMap<>();
-        status.put("status", "UP");
+        status.put("status", "Application running successfully");
         status.put("timestamp", LocalDateTime.now());
-
         return status;
     }
 

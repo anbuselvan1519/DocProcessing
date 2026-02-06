@@ -5,6 +5,7 @@ import com.example.DB.Models.DocumentModel.Document;
 import com.example.DB.Models.UserModel.User;
 import com.example.DB.Repositories.DocumentRepository.DocumentRepository;
 import com.example.DB.Services.WorkFlowService.WorkFlowService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import net.sourceforge.tess4j.TesseractException;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class DocumentController {
 
     public DocumentController(
             DocumentRepository documentRepository,
-            WorkFlowService workflowService, WorkFlowService workFlowService) {
+            WorkFlowService workflowService) {
         this.documentRepository = documentRepository;
         this.workFlowService = workflowService;
     }
@@ -35,12 +36,12 @@ public class DocumentController {
     ) throws IOException, TesseractException {
 
         if (file.isEmpty()) {
-            throw new RuntimeException("Uploaded file is empty");
+            throw new IllegalArgumentException("Uploaded file is empty");
         }
 
         User user = (User) session.getAttribute("USER");
         if (user == null) {
-            throw new RuntimeException("User not logged in");
+            throw new IllegalStateException("User not logged in");
         }
 
         File tempFile = File.createTempFile(
@@ -55,7 +56,8 @@ public class DocumentController {
         document.setMimeType(file.getContentType());
         document.setStatus("UPLOADED");
         document.setUploadedAt(LocalDateTime.now());
-        document.setUploadedBy(user);
+        document.setUploadedByUserId(user.getId());
+        document.setUploadedByRole(user.getRole());
 
         document = documentRepository.save(document);
 
@@ -69,10 +71,9 @@ public class DocumentController {
 
     @GetMapping("/{id}")
     public Document getDocument(@PathVariable Long id) {
-
         return documentRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Document not found")
+                        new EntityNotFoundException("Document not found")
                 );
     }
 }

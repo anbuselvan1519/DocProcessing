@@ -1,6 +1,5 @@
 package com.example.DB.Models.DocumentModel;
 
-import com.example.DB.Models.UserModel.User;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -22,8 +21,11 @@ public class Document {
 
     private LocalDateTime uploadedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "uploaded_by")
-    private User uploadedBy;
+    @Column(name = "uploaded_by_user_id", nullable = false)
+    private Long uploadedByUserId;
+
+    @Column(name = "uploaded_by_role", nullable = false)
+    private String uploadedByRole;
+
 }
 

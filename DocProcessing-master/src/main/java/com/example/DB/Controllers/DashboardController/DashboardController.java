@@ -17,21 +17,12 @@ import java.util.Map;
 public class DashboardController {
 
     private final DashboardService dashboardService;
-    private final AuditLogService auditLogService;
 
     public DashboardController(
             DashboardService dashboardService,
             AuditLogService auditLogService
     ) {
         this.dashboardService = dashboardService;
-        this.auditLogService = auditLogService;
-    }
-
-    @GetMapping("/summary")
-    public Map<String, Long> getDashboardSummary(HttpSession session) {
-
-        ensureLoggedIn(session);
-        return dashboardService.getAnalytics();
     }
 
     @GetMapping("/recent")
@@ -66,12 +57,11 @@ public class DashboardController {
         return dashboardService.getAnalytics();
     }
 
-    private User ensureLoggedIn(HttpSession session) {
+    private void ensureLoggedIn(HttpSession session) {
 
         User user = (User) session.getAttribute("USER");
         if (user == null) {
-            throw new RuntimeException("User not logged in");
+            throw new IllegalStateException("User not logged in");
         }
-        return user;
     }
 }
