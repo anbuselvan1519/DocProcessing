@@ -1,20 +1,21 @@
 package com.example.DB;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestControllerAdvice
+@SuppressWarnings("unused") // Spring calls these via reflection
 public class GlobalExceptionHandler {
 
     // ---------------- AUTH / SESSION ----------------
@@ -29,7 +30,7 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.FORBIDDEN, "ACCESS_DENIED", ex.getMessage());
     }
 
-    // ---------------- AUTH / LOGIN ----------------
+    // ---------------- INPUT ----------------
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleInvalidInput(IllegalArgumentException ex) {
@@ -43,16 +44,16 @@ public class GlobalExceptionHandler {
         return build(
                 HttpStatus.BAD_REQUEST,
                 "INVALID_MULTIPART_REQUEST",
-                "Request must be multipart/form-data"
+                ex.getMessage()
         );
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<?> handleFileTooLarge(MaxUploadSizeExceededException ex) {
         return build(
-                HttpStatus.PAYLOAD_TOO_LARGE,
+                HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, // ✅ NOT deprecated
                 "FILE_TOO_LARGE",
-                "Uploaded file exceeds allowed size"
+                ex.getMessage()
         );
     }
 
@@ -61,7 +62,7 @@ public class GlobalExceptionHandler {
         return build(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "FILE_IO_ERROR",
-                "File processing failed"
+                ex.getMessage()
         );
     }
 
@@ -72,7 +73,9 @@ public class GlobalExceptionHandler {
         return build(
                 HttpStatus.BAD_REQUEST,
                 "VALIDATION_FAILED",
-                "Request validation failed"
+                ex.getBindingResult().getFieldError() != null
+                        ? ex.getBindingResult().getFieldError().getDefaultMessage()
+                        : "Validation error"
         );
     }
 
@@ -96,7 +99,7 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // ---------------- DOCUMENT / DECISION ----------------
+    // ---------------- OPERATION ----------------
 
     @ExceptionHandler(UnsupportedOperationException.class)
     public ResponseEntity<?> handleUnsupportedOperation(UnsupportedOperationException ex) {
@@ -107,18 +110,7 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // ---------------- DASHBOARD / AUDIT ----------------
-
-    @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<?> handleNullPointer(NullPointerException ex) {
-        return build(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "NULL_REFERENCE",
-                "Unexpected null value encountered"
-        );
-    }
-
-    // ---------------- GENERIC RUNTIME ----------------
+    // ---------------- RUNTIME ----------------
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleRuntime(RuntimeException ex) {
@@ -129,14 +121,14 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // ---------------- FALLBACK (LAST LINE OF DEFENSE) ----------------
+    // ---------------- FALLBACK ----------------
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGeneral(Exception ex) {
         return build(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "INTERNAL_SERVER_ERROR",
-                "An unexpected server error occurred"
+                ex.getMessage()
         );
     }
 
