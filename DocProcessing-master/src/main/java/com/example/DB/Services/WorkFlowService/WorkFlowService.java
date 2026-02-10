@@ -50,9 +50,9 @@ public class WorkFlowService {
             OcrService ocrService,
             ExtractionService extractionService,
             DecisionService decisionService,
+            AuditLogService auditLogService,
             ExtractionRepository extractionRepository,
             DecisionRepository decisionRepository,
-            AuditLogService auditLogService,
             DocumentRepository documentRepository
     ) {
         this.documentNormalizerService = documentNormalizerService;

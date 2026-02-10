@@ -16,7 +16,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    // -------- REGISTER --------
+    // -------- RAW JSON FORMAT INPUT ------------
     @PostMapping("/register")
     public User register(
             @RequestBody RegisterRequest request,
@@ -25,7 +25,6 @@ public class AuthController {
         return authService.register(request, session);
     }
 
-    // -------- LOGIN --------
     @PostMapping("/login")
     public User login(
             @RequestParam String email,
@@ -38,14 +37,12 @@ public class AuthController {
         return authService.login(email, password, session);
     }
 
-    // -------- LOGOUT --------
     @PostMapping("/logout")
     public String logout(HttpSession session) {
         authService.logout(session);
         return "Logged out successfully";
     }
 
-    // -------- CURRENT USER --------
     @GetMapping("/me")
     public User getCurrentUser(HttpSession session) {
         User user = (User) session.getAttribute("USER");
