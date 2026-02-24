@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<?> handleFileTooLarge(MaxUploadSizeExceededException ex) {
         return build(
-                HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, // ✅ NOT deprecated
+                HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE,
                 "FILE_TOO_LARGE",
                 ex.getMessage()
         );
